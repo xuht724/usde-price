@@ -23,6 +23,8 @@ type OptimalRes = {
 }
 
 const TRX_GASCOST = 200000n
+const costBp = 0.001;
+
 
 // const ETSWAP_GASCOST = 200000n 
 
@@ -96,7 +98,14 @@ export class USDEQuoter{
             let formatOut = Number(formatUnits(quote,outputDecimals))
             let profit = formatOut - formatIn
             let rate = profit / formatIn
-            if (profit>maxProfit) {
+
+            if (amount == initialAmount) {
+                maxProfit = profit;
+                optimalAmount = amount;
+                bestQuote = quote;
+            }
+
+            if (profit>maxProfit && rate > costBp) {
                 maxProfit = profit;
                 optimalAmount = amount;
                 bestQuote = quote;
@@ -182,7 +191,12 @@ export class USDEQuoter{
             let formatOut = Number(formatUnits(quote,outputDecimals))
             let profit = formatOut - formatIn
             let rate = profit / formatIn
-            if (profit>maxProfit) {
+            if (amount == initialAmount) {
+                maxProfit = profit;
+                optimalAmount = amount;
+                bestQuote = quote;
+            }
+            if (profit>maxProfit && rate > costBp) {
                 maxProfit = profit;
                 optimalAmount = amount;
                 bestQuote = quote;
@@ -215,8 +229,8 @@ export class USDEQuoter{
         console.log(`Processing block: ${blockNumber}`);
 
         // Initial input amount (example: 1000 USDE)
-        const initialAmount = '100000';
-        const endAmount = '500000';
+        const initialAmount = '1000';
+        const endAmount = '50000';
 
         // Handle ET Swap
         const optimalResET = await this.handleETSwap(initialAmount, endAmount, blockNumber);
@@ -253,6 +267,7 @@ export class USDEQuoter{
             const amountOut = Number(formatUnits(result.amountOut, StableCoinDecimalMap[result.tokenOut]));
             const profit = amountOut - amountIn;
             const rate = ((amountOut-amountIn) / amountIn);
+            let estimateNetrofit = profit - amountIn * costBp - estimateGasCost
             console.log(
                 `Block: ${blockNumber}, ` +
                 `${result.tokenIn} -> ${result.tokenOut}: ` +
@@ -262,7 +277,9 @@ export class USDEQuoter{
                 `Native Price: ${nativePrice},` + 
                 `Rate: ${rate}, ` +
                 `TokenIn: ${result.tokenIn}, ` +
-                `TokenOut: ${result.tokenOut}`  
+                `TokenOut: ${result.tokenOut}`  + 
+                `HasProfit: ${estimateNetrofit > 0}` + 
+                `EstimateNetProfit: ${estimateNetrofit} `
             );
         } else {
             console.log(`Block: ${blockNumber} - No optimal result`);

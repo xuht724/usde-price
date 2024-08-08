@@ -174,5 +174,5 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-
-tickToKeyMap.jsonprice.log
+tickToKeyMap.json
+price.log

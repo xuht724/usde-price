@@ -10,7 +10,7 @@ import {
 } from "viem";
 import { mainnet } from "viem/chains";
 import { CURVE_USDE_USDC, ETH_CHAINLINK_ORACLE, V3_USDT_USDE_100 } from "../src/constants";
-import { ERIGON_URL, ERIGON_WS_URL, WEBSOCKET_NODE_URL } from "../src/config";
+import { ERIGON_URL, ERIGON_WS_URL } from "../src/config";
 import { ChainLink_Oracle_ABI } from "../src/abi/ChainLinkOracle";
 
 export class Tracer {
